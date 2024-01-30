@@ -79,11 +79,13 @@ class Car{
     else if(this.speed<0){
       this.speed += this.friction;
     }
-    if(this.keyControls.right){
-      this.angle+=0.1;
-    }
-    if(this.keyControls.left){
-      this.angle-=0.1;
+    if(this.speed!=0){
+      if(this.keyControls.right){
+        this.angle+=0.1*(this.speed/30);
+      }
+      if(this.keyControls.left){
+        this.angle-=0.1*(this.speed/30);
+      }
     }
     this.#carStartPosY-=this.speed*Math.cos(this.angle);
     this.#carStartPosX+=this.speed*Math.sin(this.angle);
