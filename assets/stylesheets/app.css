@@ -3,12 +3,10 @@
   padding: 0px;
   overflow: hidden;
 }
-body{
-  background-color: lightgray;
-}
+
 canvas{
   position: relative;
-  background-color: black;
+  background-color: darkgray;
   top:0px;
   left: 0px;
 }
