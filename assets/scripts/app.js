@@ -207,7 +207,7 @@ class Road {
     this.#ctx = ctx;
 
     this.totalRoadWidth = this.#laneNumber * this.#laneWidth;
-    this.maxRoadLen = 100000;
+    this.maxRoadLen = 10000000;
     this.left = this.#centerPoint - this.totalRoadWidth / 2;
     this.right = this.#centerPoint + this.totalRoadWidth / 2;
     this.topLeft = { x: this.left, y: -this.maxRoadLen };
