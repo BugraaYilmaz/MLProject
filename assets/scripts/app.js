@@ -2,6 +2,7 @@ const canv = document.querySelector('#canv');
 const ctx = canv.getContext('2d');
 let latestAnimationRequest;
 let newRoad;
+let newSensors;
 window.onload = () => {
   canv.height = window.innerHeight;
   canv.width = window.innerWidth;
@@ -16,6 +17,7 @@ window.onload = () => {
     canv.height / 1.2,
     ctx
   );
+  newSensors= new Sensor(carF,3,90,400,ctx);
   carF.animate();
 };
 window.addEventListener('resize', () => {
@@ -33,6 +35,7 @@ window.addEventListener('resize', () => {
     canv.height / 1.2,
     ctx
   );
+  newSensors= new Sensor(carF,3,90,400,ctx);
   carF.animate();
 });
 
@@ -40,9 +43,15 @@ class Car {
   #carWidth;
   #carHeight;
   #canvasWidth;
+  get carDims(){
+    return [this.#carWidth,this.#carHeight];
+  }
   #canvasHeight;
   #carColor;
   #carStartPosX;
+  get carStartPos(){
+    return [this.#carStartPosX,this.#carStartPosY];
+  }
   #carStartPosY;
   #ctx;
   keyControls;
@@ -98,6 +107,8 @@ class Car {
     this.#ctx.save();
     this.#ctx.translate(0,-this.#carStartPosY+this.#canvasHeight*0.9);
     newRoad.drawRoad();
+    newSensors.placeSensors();
+    newSensors.drawSensors();
     this.#carMovement();
     this.#draw();
     this.#ctx.restore();
@@ -249,5 +260,42 @@ class Road {
       this.#ctx.closePath();
       this.#ctx.setLineDash([]);
     }
+  }
+}
+
+class Sensor{
+  #ctx;
+  constructor(car,sensorCount,angle,sensorReach,ctx){
+    this.car=car;
+    this.sensorCount=sensorCount;
+    this.angle=angle;
+    this.sensorReach=sensorReach;
+    this.#ctx=ctx;
+  }
+  placeSensors(){
+    this.sensors=[];
+    let x,y;
+    [x,y]=this.car.carStartPos;
+    let carWid,carHei;
+    [carWid,carHei]=this.car.carDims;
+    this.x=x+carWid/2;
+    this.y=y-carHei/2;
+    let eachAngle= (this.angle/(this.sensorCount-1)*(3.14/180));
+    for(let i=1;i<=this.sensorCount;i++){
+      const start = {x: this.x , y: this.y};
+      const end = {x: this.x-this.sensorReach*Math.cos(eachAngle*i+this.car.angle), y: this.y-this.sensorReach*Math.sin(eachAngle*i+this.car.angle)};
+      this.sensors.push([start,end]);
+    }
+  }
+  drawSensors(){
+    this.#ctx.strokeStyle="yellow";
+    this.#ctx.lineWidth=4;
+    this.sensors.forEach((eachValue)=>{
+      this.#ctx.beginPath();
+      this.#ctx.moveTo(eachValue[0].x,eachValue[0].y);
+      this.#ctx.lineTo(eachValue[1].x,eachValue[1].y);
+      this.#ctx.stroke();
+      this.#ctx.closePath();
+    })
   }
 }
